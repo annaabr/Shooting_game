@@ -79,7 +79,7 @@ class Game:
             self.clock.tick(30)
 
     def main_loop(self):
-        pygame.mixer.music.load("background_music.mp3")
+        pygame.mixer.music.load("music/background_music.mp3")
         pygame.mixer.music.play(-1)
 
         while self.running:
@@ -142,11 +142,11 @@ class Game:
 
     def win(self):
         # Показать поздравление
-        self.show_message("You Win!", "win_image.png", "fanfare_sound.mp3")
+        self.show_message("You Win!", "win_image.png", "music/winner_sound.mp3")
 
     def game_over(self):
         # Показать сообщение о проигрыше
-        self.show_message("Game Over", "game_over_image.png", "rip_music.mp3")
+        self.show_message("Game Over", "game_over_image.png", "music/rip_music.mp3")
 
     def show_message(self, message, image_file, sound_file):
         image = pygame.image.load(image_file)
@@ -173,7 +173,7 @@ class Game:
 class Player:
     def __init__(self, game):
         self.game = game
-        self.image = pygame.image.load("player_image.png")
+        self.image = pygame.image.load("img/player_image.png")
         self.rect = self.image.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
 
     def update(self):
@@ -203,7 +203,7 @@ class Player:
 
 class Enemy:
     def __init__(self):
-        self.image = pygame.image.load("enemy_image.png")
+        self.image = pygame.image.load("img/enemy_image.png")
         self.rect = self.image.get_rect(x=random.randint(0, SCREEN_WIDTH - self.image.get_width()), y=0)
 
     def update(self):
@@ -217,7 +217,7 @@ class Enemy:
 
 class Bullet:
     def __init__(self, position):
-        self.image = pygame.image.load("bullet_image.png")
+        self.image = pygame.image.load("img/bullet_image.png")
         self.rect = self.image.get_rect(center=position)
 
     def update(self):

@@ -138,7 +138,7 @@ while True:
         pygame.quit()
         sys.exit()
 
-    # Спавн врагов
+    # Появление врагов
     enemy_spawn_timer += 1
     if enemy_spawn_timer > 60:  # Каждые 60 кадров
         enemy = Enemy()

@@ -10,7 +10,6 @@ SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 PLAYER_SPEED = 5
 ENEMY_SPEED = 2
-BULLET_SPEED = 10
 MAX_LIVES = 5
 WIN_SCORE = 10
 
@@ -24,7 +23,6 @@ player_image = pygame.image.load('img/player_image.png')
 enemy_image = pygame.image.load('img/enemy_image.png')
 enemy_image = pygame.transform.scale(enemy_image, (100,90))
 
-bullet_image = pygame.image.load('img/bullet_image.png')
 win_image = pygame.image.load('img/win_image.png')
 lose_image = pygame.image.load('img/rip_image.png')
 
@@ -69,21 +67,9 @@ class Enemy(pygame.sprite.Sprite):
             else:
                 self.rect.y -= ENEMY_SPEED
 
-class Bullet(pygame.sprite.Sprite):
-    def __init__(self, x, y):
-        super().__init__()
-        self.image = bullet_image
-        self.rect = self.image.get_rect(center=(x, y))
-
-    def update(self):
-        self.rect.y -= BULLET_SPEED
-        if self.rect.bottom < 0:
-            self.kill()
-
 # Инициализация спрайтов
 player = Player()
 enemies = pygame.sprite.Group()
-bullets = pygame.sprite.Group()
 
 # Переменные игры
 lives = MAX_LIVES
@@ -103,21 +89,13 @@ while True:
             pygame.quit()
             sys.exit()
         if event.type == pygame.MOUSEBUTTONDOWN:
-            bullet = Bullet(player.rect.centerx, player.rect.top)
-            bullets.add(bullet)
+           pass
 
     # Обновление
     player.update()
-    bullets.update()
     enemies.update()
 
     # Проверка на столкновения
-    for bullet in bullets:
-        hit_enemies = pygame.sprite.spritecollide(bullet, enemies, True)
-        if hit_enemies:
-            score += 1
-            bullet.kill()
-
     if pygame.sprite.spritecollide(player, enemies, False):
         lives -= 1
         if lives <= 0:
@@ -149,7 +127,6 @@ while True:
     screen.fill((0,0,0))
     screen.blit(player.image, player.rect)
     enemies.draw(screen)
-    bullets.draw(screen)
 
     # Отображение жизней и счета
     font = pygame.font.Font(None, 36)

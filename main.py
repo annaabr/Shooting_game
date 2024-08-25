@@ -13,6 +13,8 @@ ENEMY_SPEED = 2
 BULLET_SPEED = 10
 MAX_LIVES = 5
 WIN_SCORE = 10
+ENEMY_SPAWN_INTERVAL = 60
+BACK_GROUND_COLOR = (50,50,255)
 
 # Инициализация экрана
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -20,13 +22,17 @@ pygame.display.set_caption("Survival Game")
 
 # Загрузка изображений и изменение их размеров
 player_image = pygame.image.load('img/player_image.png')
+player_image = pygame.transform.scale(player_image, (100,90))
 
 enemy_image = pygame.image.load('img/enemy_image.png')
 enemy_image = pygame.transform.scale(enemy_image, (100,90))
 
 bullet_image = pygame.image.load('img/bullet_image.png')
+
 win_image = pygame.image.load('img/win_image.png')
+
 lose_image = pygame.image.load('img/rip_image.png')
+lose_image = pygame.transform.scale(lose_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # Загрузка звуков
 win_sound = pygame.mixer.Sound('music/winner_sound.mp3')
@@ -140,13 +146,13 @@ while True:
 
     # Появление врагов
     enemy_spawn_timer += 1
-    if enemy_spawn_timer > 60:  # Каждые 60 кадров
+    if enemy_spawn_timer >  ENEMY_SPAWN_INTERVAL:
         enemy = Enemy()
         enemies.add(enemy)
         enemy_spawn_timer = 0
 
     # Отрисовка
-    screen.fill((0,0,0))
+    screen.fill(BACK_GROUND_COLOR)
     screen.blit(player.image, player.rect)
     enemies.draw(screen)
     bullets.draw(screen)

@@ -8,7 +8,7 @@ pygame.init()
 # Константы
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
-PLAYER_SPEED = 5
+PLAYER_SPEED = 10
 ENEMY_SPEED = 2
 MAX_LIVES = 5
 WIN_SCORE = 10
@@ -26,13 +26,14 @@ player_image = pygame.transform.scale(player_image, (100,90))
 enemy_image = pygame.image.load('img/enemy_image.png')
 enemy_image = pygame.transform.scale(enemy_image, (100,90))
 
-bullet_image = pygame.image.load('img/bullet_image.png')
-
 win_image = pygame.image.load('img/win_image.png')
 win_image = pygame.transform.scale(win_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
 lose_image = pygame.image.load('img/rip_image.png')
 lose_image = pygame.transform.scale(lose_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
+fire_image = pygame.image.load('img/fire_image.png')
+fire_image = pygame.transform.scale(fire_image, (100, 80))
 
 # Загрузка звуков
 win_sound = pygame.mixer.Sound('music/winner_sound.mp3')
@@ -57,6 +58,7 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_DOWN] and self.rect.bottom < SCREEN_HEIGHT:
             self.rect.y += PLAYER_SPEED
 
+
 class Enemy(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -70,31 +72,18 @@ class Enemy(pygame.sprite.Sprite):
             self.rect.x += ENEMY_SPEED
         else:
             self.rect.x -= ENEMY_SPEED
-            if self.rect.y < player.rect.y:
-                self.rect.y += ENEMY_SPEED
-            else:
-                self.rect.y -= ENEMY_SPEED
-
-class Bullet(pygame.sprite.Sprite):
-    def __init__(self, x, y):
-        super().__init__()
-        self.image = bullet_image
-        self.rect = self.image.get_rect(center=(x, y))
-
-    def update(self):
-        self.rect.y -= BULLET_SPEED
-        if self.rect.bottom < 0:
-            self.kill()
+        if self.rect.y < player.rect.y:
+            self.rect.y += ENEMY_SPEED
+        else:
+            self.rect.y -= ENEMY_SPEED
 
 # Инициализация спрайтов
 player = Player()
 enemies = pygame.sprite.Group()
-bullets = pygame.sprite.Group()
 
 # Переменные игры
 lives = MAX_LIVES
 score = 0
-enemy_spawn_timer = 0
 clock = pygame.time.Clock()
 
 # Загрузка музыки
@@ -108,25 +97,23 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            bullet = Bullet(player.rect.centerx, player.rect.top)
-            bullets.add(bullet)
+        if event.type == pygame.MOUSEBUTTONDOWN: #****
+            if event.button == 1:  # Левый клик мыши
+                for enemy in enemies:
+                    if enemy.rect.collidepoint(event.pos):  # Проверка, попал ли клик в спрайт
+                        enemies.remove(enemy)  # Удаляем спрайт (или можно просто не рисовать его)
+                        score += 1
+                        break  # Выходим из цикла, если спрайт удален
 
     # Обновление
     player.update()
-    bullets.update()
     enemies.update()
 
     # Проверка на столкновения
-    for bullet in bullets:
-        hit_enemies = pygame.sprite.spritecollide(bullet, enemies, True)
-        if hit_enemies:
-            score += 1
-            bullet.kill()
-
-    if pygame.sprite.spritecollide(player, enemies, False):
+    if pygame.sprite.spritecollide(player, enemies, True):
         lives -= 1
         if lives <= 0:
+            pygame.time.delay(2000)
             pygame.mixer.music.stop()
             lose_sound.play()
             screen.blit(lose_image, (0, 0))
@@ -155,7 +142,6 @@ while True:
     screen.fill(BACK_GROUND_COLOR)
     screen.blit(player.image, player.rect)
     enemies.draw(screen)
-    bullets.draw(screen)
 
     # Отображение жизней и счета
     font = pygame.font.Font(None, 36)

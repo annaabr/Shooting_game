@@ -13,8 +13,8 @@ ENEMY_SPEED = 2
 BULLET_SPEED = 10
 MAX_LIVES = 5
 WIN_SCORE = 10
-ENEMY_SPAWN_INTERVAL = 60
-BACK_GROUND_COLOR = (50,50,255)
+BACK_GROUND_COLOR = (200,255,200)
+FONT_COLOR = (0, 0, 0)
 
 # Инициализация экрана
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -30,6 +30,7 @@ enemy_image = pygame.transform.scale(enemy_image, (100,90))
 bullet_image = pygame.image.load('img/bullet_image.png')
 
 win_image = pygame.image.load('img/win_image.png')
+win_image = pygame.transform.scale(win_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
 lose_image = pygame.image.load('img/rip_image.png')
 lose_image = pygame.transform.scale(lose_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -66,11 +67,11 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.y = random.randint(0, SCREEN_HEIGHT)
 
     def update(self):
-        if self.rect.x < SCREEN_WIDTH // 2:
+        if self.rect.x < player.rect.x:
             self.rect.x += ENEMY_SPEED
         else:
             self.rect.x -= ENEMY_SPEED
-            if self.rect.y < SCREEN_HEIGHT // 2:
+            if self.rect.y < player.rect.y:
                 self.rect.y += ENEMY_SPEED
             else:
                 self.rect.y -= ENEMY_SPEED
@@ -131,25 +132,25 @@ while True:
             lose_sound.play()
             screen.blit(lose_image, (0, 0))
             pygame.display.flip()
-            pygame.time.delay(3000)
+            pygame.time.delay(5000)
             pygame.quit()
             sys.exit()
 
     if score >= WIN_SCORE:
         pygame.mixer.music.stop()
         win_sound.play()
+        screen.fill(BACK_GROUND_COLOR)
         screen.blit(win_image, (0, 0))
         pygame.display.flip()
-        pygame.time.delay(3000)
+        pygame.time.delay(5000)
         pygame.quit()
         sys.exit()
 
     # Появление врагов
-    enemy_spawn_timer += 1
-    if enemy_spawn_timer >  ENEMY_SPAWN_INTERVAL:
+    if len(enemies) == 0:
         enemy = Enemy()
         enemies.add(enemy)
-        enemy_spawn_timer = 0
+        #enemy_spawn_timer = 0
 
     # Отрисовка
     screen.fill(BACK_GROUND_COLOR)
@@ -159,8 +160,8 @@ while True:
 
     # Отображение жизней и счета
     font = pygame.font.Font(None, 36)
-    lives_text = font.render(f'Lives: {lives}', True, (255, 255, 255))
-    score_text = font.render(f'Score: {score}', True, (255, 255, 255))
+    lives_text = font.render(f'Lives: {lives}', True, FONT_COLOR)
+    score_text = font.render(f'Score: {score}', True, FONT_COLOR)
     screen.blit(lives_text, (10, 10))
     screen.blit(score_text, (10, 50))
 

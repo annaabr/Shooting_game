@@ -7,6 +7,8 @@ pygame.init()
 
 # Константы
 SCREEN_WIDTH = 800
+
+
 SCREEN_HEIGHT = 600
 PLAYER_SPEED = 10
 ENEMY_SPEED = 2
